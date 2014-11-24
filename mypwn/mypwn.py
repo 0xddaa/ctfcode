@@ -1,15 +1,23 @@
 import telnetlib
 import socket
 
-host = "localhost"
-port = 55666
+#host = "localhost"
+#port = 55666
 
-t = telnetlib.Telnet(host, port)
-s = t.get_socket()
+#t = telnetlib.Telnet(host, port)
+#s = t.get_socket()
+t = None
+s = None
 
 #*************************************#
 # handle connection, input and output #
 #*************************************#
+
+def get_t():
+    return t
+
+def get_s():
+    return s
 
 def connect(host, port):
     global t, s
@@ -17,6 +25,7 @@ def connect(host, port):
     s = t.get_socket()
 
 def read_until(end):
+    global s
     buf = ""
     while True:
         buf += s.recv(1)
@@ -28,7 +37,12 @@ def read_until(end):
 def read_line():
     return read_until("\n")
 
+"""
+If daemon use read() to get input, using send(buf, length) to prevent I/O sequence confusion.
+"""
 def send(buf, length = 0):
+    global s
+
     for i in range(length - len(buf)):
         buf += "\x00"
     s.send(buf)
@@ -44,6 +58,7 @@ def pack(addr):
     return addr[::-1].encode("hex")
 
 def unpack(addr):
+    assert len(addr) == 8, "length of address error!"
     return addr.decode("hex")[::-1]
 
 def int_to_dword(num):
@@ -80,7 +95,7 @@ class Libc_func:
         # count d
 
     def libc(self, f):
-        assert self.libc_base != -1, "plz count libc base first!!"
+        assert self.libc_base != -1, "plz count libc base first!"
         import subprocess
         cmd = "readelf -s " + self.path + "| grep " + self.func[f] + "@@" + " | awk '{print $2}'"
         p = subprocess.Popen(cmd, shell = True, stdout = subprocess.PIPE)
