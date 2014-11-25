@@ -63,9 +63,14 @@ def unpack(addr):
 
 def int_to_dword(num):
     if num > 0:
-        return hex(num)
+        dword = hex(num)[2:]
     else:
-        return hex(pow(2, 32) + num)
+        dword = hex(pow(2, 32) + num)[2:]
+    
+    for i in range(8 - len(dword)):
+        dword = "0" + dword
+
+    return dword
 
 #*************************#
 #     count libc base     #
