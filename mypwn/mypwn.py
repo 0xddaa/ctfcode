@@ -72,9 +72,16 @@ def int_to_dword(num):
 
     return dword
 
+"""
+Get base address after we got memory address.
+ex: get buf addr, return eip
+"""
 def get_base(addr, offset):
     return int_to_dword(int(addr, 16) - offset)
 
+"""
+Get real address after we got memory bass
+"""
 def get_addr(base, offset):
     return int_to_dword(int(base, 16) + offset)
 
