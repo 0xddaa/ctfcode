@@ -72,11 +72,17 @@ def int_to_dword(num):
 
     return dword
 
+def get_base(addr, offset):
+    return int_to_dword(int(addr, 16) - offset)
+
+def get_addr(base, offset):
+    return int_to_dword(int(base, 16) + offset)
+
 #*************************#
 #     count libc base     #
 #*************************#
 
-class Libc_func:
+class Libc:
     path = ""
     libc_base = -1
     func = {"write" :"__write",\
@@ -88,7 +94,7 @@ class Libc_func:
     def __init__(self, path):
         self.path = path
     
-    def count_libcbase(self, f, addr):
+    def get_base(self, f, addr):
         assert self.path != "", "plz set libc path first!"
         import subprocess
         cmd = "readelf -s " + self.path + "| grep " + self.func[f] + "@@" + " | awk '{print $2}'"
@@ -96,8 +102,6 @@ class Libc_func:
         offset = int(p.stdout.read().strip(), 16)
         self.libc_base = int(addr, 16) - offset
         print "libc_base : " + hex(self.libc_base)
-
-        # count d
 
     def libc(self, f):
         assert self.libc_base != -1, "plz count libc base first!"
