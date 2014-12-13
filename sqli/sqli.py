@@ -73,7 +73,7 @@ class BooleanBased:
     def guess_length(self, minlen, maxlen):
         return self.binsearch(minlen, maxlen, num = True)
 
-    def guess_text(self, length, verbose = False, num = False):
+    def guess_text(self, length, verbose = False):
         text = ""
         for i in range(length):
             text += chr(self.binsearch(0x20, 0x80, index = i+1))
