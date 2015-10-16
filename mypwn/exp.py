@@ -5,7 +5,7 @@ info = log.info
 
 # setting 
 elf = ELF("")
-libc = ELF("libc.so.6")
+libc = ELF("local")
 
 # trigger vuln
 r = remote("localhost", 5566)
