@@ -5,10 +5,21 @@ info = log.info
 
 # setting 
 elf = ELF("")
-libc = ELF("local")
+libc = None
+r = None
 
-# trigger vuln
-r = remote("localhost", 5566)
+def local():
+	global libc, r
+	libc = ELF("local")
+	r = remote("localhost", 5566)
+
+def fuck():
+	global libc, r
+	libc = ELF("libc.so.6")
+	r = remote("52.68.53.28", 56746)
+
+local()
+#remote()
 
 r.interactive()
 
