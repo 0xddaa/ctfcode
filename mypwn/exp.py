@@ -5,8 +5,6 @@ info = log.info
 
 # setting 
 elf = ELF("")
-libc = None
-r = None
 
 def local():
 	global libc, r
@@ -19,7 +17,7 @@ def fuck():
 	r = remote("52.68.53.28", 56746)
 
 local()
-#remote()
+#fuck()
 
 r.interactive()
 
