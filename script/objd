@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ -z $1 ]; then
+    echo "Usage: objd <program>"
+    exit
+fi
+
+/usr/bin/objdump -d -M intel $1
