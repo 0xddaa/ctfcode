@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ -z $1 ]; then
+    echo "Usage: ncgdb <program> [port]"
+    exit
+fi
+
+if [ -z $2 ]; then
+    /usr/bin/ncat -vc "gdbserver localhost:4444 $1" -kl 5566
+else
+    /usr/bin/ncat -vc "gdbserver localhost:4444 $1" -kl $2
+fi
