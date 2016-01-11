@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ -z $1 ]; then
+    echo "Usage: ncelf <program> [port]"
+    exit
+fi
+
+if [ -z $2 ]; then
+    /usr/bin/ncat -vc "./$1" -kl $port
+else
+    /usr/bin/ncat -vc "./$1" -kl $2
+fi
