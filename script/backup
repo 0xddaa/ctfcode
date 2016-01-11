@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ -z $1 ]; then
+    echo "Usage: backup <directory>"
+    exit
+fi
+
+rsync -av $1 -e 'ssh -p 55667' dada@sqduty:~/ctf/ctf_work/$1
