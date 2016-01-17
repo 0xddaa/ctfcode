@@ -5,4 +5,6 @@ if [ -z $1 ]; then
     exit
 fi
 
-rsync -av $1 -e 'ssh -p 55667' dada@sqduty:~/ctf/ctf_work/
+dir=$(echo $1 | tr -d '/')
+
+rsync -av $dir -e 'ssh -p 55667' dada@sqduty:~/ctf/ctf_work/
