@@ -6,7 +6,7 @@ if [ -z $1 ]; then
 fi
 
 if [ -z $2 ]; then
-    /usr/bin/ncat -vc "./$1" -kl $port
+    /usr/bin/ncat -vc "./$1" -kl 5566
 else
     /usr/bin/ncat -vc "./$1" -kl $2
 fi
