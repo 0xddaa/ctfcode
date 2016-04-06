@@ -1,0 +1,30 @@
+#!/bin/bash
+
+HOST="pwnkr"
+PORT="2222"
+LPATH="."
+
+for i in "$@"
+do
+case $i in
+    -h=*)
+    HOST="${i#-h=}"
+    ;;
+    -P=*)
+    PORT="${i#-P=}"
+    ;;
+    -f=*)
+    LPATH="${i#-f=}"
+    ;;
+    *)
+    RPATH="$i"
+    ;;
+esac
+done
+
+if [ -z $RPATH ]; then
+    echo "Usage: myscp <remote_path> [-h=host] [-P=port] [-f=local_path]"
+    exit
+fi
+
+/usr/bin/scp -P$PORT ${PWD##*/}@$HOST:$RPATH $LPATH
