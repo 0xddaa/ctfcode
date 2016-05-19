@@ -49,5 +49,6 @@ def get_pseudo_code(func):
 
     sock.send(bytes('GETPSEUDOCODE {}'.format(func), 'UTF-8'))
     code = recv(sock).decode().strip()
-    pseudo_code[func] = code
+    if 'Function not found' not in code:
+        pseudo_code[func] = code
     print(pseudo_code[func])
