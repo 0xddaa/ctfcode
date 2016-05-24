@@ -2,6 +2,7 @@ import gdb
 import socket
 import pickle
 import os
+import subprocess
 
 IDA_HOST = '10.113.208.101'
 PORT = 50216
@@ -39,6 +40,7 @@ def get_ida_symbols():
         print('Can\'t not receive ida symfile.')
 
 pseudo_code = dict()
+
 def get_pseudo_code(func):
     global pseudo_code
     if func in pseudo_code.keys():
@@ -52,3 +54,11 @@ def get_pseudo_code(func):
     if 'Function not found' not in code:
         pseudo_code[func] = code
     print(pseudo_code[func])
+
+def get_local_type():
+    sock = connect_ida()
+    if not sock: return
+
+    sock.send(bytes('GETLOCALTYPE', 'UTF-8'))
+    #buf = recv(sock)
+    #subprocess.check_output('gcc')
