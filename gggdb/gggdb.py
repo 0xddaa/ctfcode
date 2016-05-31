@@ -103,6 +103,10 @@ class IDAPYTHON(gdb.Command):
     def __init__(self):
         super(IDAPYTHON, self).__init__('idapython', gdb.COMMAND_USER)
     def invoke(self, args, from_tty):
+        if args == 'cheatsheet':
+            self.__cheatsheet()
+            return
+
         sock = connect_ida()
         if not sock: return
 
@@ -116,6 +120,23 @@ class IDAPYTHON(gdb.Command):
             return
         send(sock, buf)
         show_result(recv(sock))
+
+    def __cheatsheet(self):
+        print('IDA python Cheat Sheet')
+        print()
+        print('idc MakeComm(addr, comment)')
+        print('----------------------------------------')
+        print('Add comment at specified address.')
+        print('Ex: idc MakeComm(0x804ddaa, \'Soy Sauce\')')
+        print()
+        print('idc SetColor(addr, what, color)')
+        print('----------------------------------------')
+        print('Set color for specified area')
+        print('Ex: idc SetColor(0x0804ddaa, 1, 0xaabbcc) // address only')
+        print('    idc SetColor(0x0804ddaa, 2, 0xaabbcc) // entire function')
+        print('    idc SetColor(0x0804ddaa, 3, 0xaabbcc) // entire segment')
+        print()
+
 
 class IDARPC(gdb.Command):
     """ IDA python command wrapper"""
