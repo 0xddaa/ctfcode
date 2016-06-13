@@ -1,23 +1,24 @@
 #!/usr/bin/python
-
 from pwn import *
-info = log.info
+import sys
+import os
 
-# setting 
-elf = ELF("")
+log.warning('Usage: ./exp.py [HOST] [PORT]')
 
-def local():
-	global libc, r
-	libc = ELF("local")
-	r = remote("localhost", 5566)
+try:
+    elf = ELF(os.path.dirname(os.path.abspath(__file__)).split('/')[-1])
+    libc = ELF('libc.so.6') if len(sys.argv) > 2 else ELF('local')
+except:
+    log.warning('Cannot open ELF or glibc.')
+    pass
 
-def fuck():
-	global libc, r
-	libc = ELF("libc.so.6")
-	r = remote("52.68.53.28", 56746)
+if len(sys.argv) > 2:
+    HOST = sys.argv[1]
+    PORT = sys.argv[2]
+else:
+    HOST = 'localhost'
+    PORT = 5566
 
-local()
-#fuck()
+r = remote(HOST, PORT)
 
 r.interactive()
-
