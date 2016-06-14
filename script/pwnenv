@@ -1,9 +1,15 @@
 #!/bin/bash
 
-[ -z "$1" ] && (echo 'Usage: pwnenv [WORKDIR]'; exit 1)
+if [ ! -z $1 ]; then
+    WORKDIR="$1"
+    cd "$WORKDIR"
+elif [ -f "$(find $PWD -type f -name $(basename $PWD))" ]; then
+    WORKDIR="$PWD"
+else
+    echo 'Usage: pwnenv [WORKDIR]'
+    exit 1
+fi
 
-WORKDIR=$1
-cd "$WORKDIR"
 BIN=$(basename $WORKDIR)
 cp ~/code/mypwn/exp.py .
 
