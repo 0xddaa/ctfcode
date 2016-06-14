@@ -1,0 +1,17 @@
+#!/bin/bash
+
+[ -z "$1" ] && (echo 'Usage: pwnenv [WORKDIR]'; exit 1)
+
+WORKDIR=$1
+cd "$WORKDIR"
+BIN=$(basename $WORKDIR)
+cp ~/code/mypwn/exp.py .
+
+screen -S pwn -d -m -t "ncat" ncgdb ./$BIN
+screen -S pwn -X screen -t "gdb" gdb
+screen -S pwn -X screen -t "vim" vim exp.py
+screen -S pwn -X screen -t "run" bash 
+screen -S pwn -X screen -t "bash" bash 
+screen -S pwn -X screen -t "ipy" ipython
+
+screen -r
