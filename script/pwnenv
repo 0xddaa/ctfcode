@@ -11,7 +11,7 @@ else
 fi
 
 BIN=$(basename $WORKDIR)
-cp ~/code/mypwn/exp.py .
+[ -f "./exp.py" ] || cp ~/code/mypwn/exp.py .
 
 screen -S pwn -d -m -t "ncat" ncgdb ./$BIN
 screen -S pwn -X screen -t "gdb" gdb
