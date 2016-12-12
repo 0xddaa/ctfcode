@@ -1,23 +1,14 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+import sys, os
 from pwn import *
-import sys
-import os
 
 log.warning('Usage: ./exp.py [HOST] [PORT]')
-
-try:
-    elf = ELF(os.path.dirname(os.path.abspath(__file__)).split('/')[-1])
-    libc = ELF('libc.so.6') if len(sys.argv) > 2 else ELF('local')
-except:
-    log.warning('Cannot open ELF or glibc.')
-    pass
-
-if len(sys.argv) > 2:
-    HOST = sys.argv[1]
-    PORT = sys.argv[2]
-else:
-    HOST = 'localhost'
-    PORT = 5566
+prog = os.path.dirname(os.path.abspath(__file__)).split('/')[-1]
+elf = ELF(prog)
+if not elf: log.warning('Cannot open ' + prog)
+libc = ELF('libc.so.6') if len(sys.argv) > 2 else elf.libc
+if not libc: log.warning('Cannot open libc.so.6')
+HOST, PORT = (sys.argv[1], sys.argv[2]) if len(sys.argv) > 2 else ('localhost', 5566)
 
 r = remote(HOST, PORT)
 
