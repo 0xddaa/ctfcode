@@ -1,0 +1,35 @@
+#!/usr/bin/env python
+from pwn import *
+import argparse
+import string
+import os
+
+parser = argparse.ArgumentParser()
+parser.add_argument('problem', help='pwnable.kr problem. It will be ssh username if user is not given.')
+parser.add_argument('-u', '--username', help='ssh username')
+parser.add_argument('-p', '--password', help='ssh password')
+parser.add_argument('-d', '--workdir', help='work dir. It will be under /tmp')
+parser.add_argument('--init-env', action='store_true', help='Initialize workdir')
+args = parser.parse_args()
+
+u = args.username if args.username else args.problem
+p = args.password if args.password else 'guest'
+
+w = '/tmp/{}'.format(args.workdir) if args.workdir else '/tmp/ddaa{}'.format(''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(4)))
+
+workdir_exist = os.path.isfile('.workdir')
+if workdir_exist:
+    w = open('.workdir', 'r').read()
+else:
+    open('.workdir', 'w').write(w)
+
+# prepare work environment
+t = ssh(user=u, host='pwnable.kr', port=2222, password=p)
+if args.init_env and not workdir_exist:
+    t.run('mkdir -p '+ w).close()
+    t.upload_dir('~/tools/Pwngdb', w)
+    t.run('echo "source /usr/share/peda/peda.py" >> {}/gdbinit'.format(w)).close()
+    t.run('echo "source {}/Pwngdb/pwngdb.py" >> {}/gdbinit'.format(w, w)).close()
+
+t.set_working_directory(w)
+t.interactive()
