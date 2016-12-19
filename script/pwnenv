@@ -13,11 +13,14 @@ fi
 BIN=$(basename $WORKDIR)
 [ -f "./exp.py" ] || cp ~/code/mypwn/exp.py .
 
-screen -S pwn -d -m -t "ncat" ncgdb ./$BIN
-screen -S pwn -X screen -t "gdb" gdb
-screen -S pwn -X screen -t "vim" vim exp.py
-screen -S pwn -X screen -t "run" bash 
-screen -S pwn -X screen -t "bash" bash 
-screen -S pwn -X screen -t "ipy" ipython
+screen -S pwn -d -m ncelf "./$BIN"
+sleep 0.1
+screen -S pwn -X screen -t gdb gdb "./$BIN"
+screen -S pwn -X screen -t vim vim exp.py
+screen -S pwn -X screen bash
+screen -S pwn -X screen bash
+screen -S pwn -X screen -t ipy ipython
+screen -S pwn -X screen bash
+screen -S pwn -X screen bash
 
-screen -r
+screen -r -p 3
