@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ -z $1 ]; then
+    echo 'Usage: angr [workdir]'
+    exit 0
+elif [ ! -d $1 ]; then
+    echo 'Must mount a folder.'
+    exit 1
+fi
+
+workdir="/home/angr/$(basename $(realpath $1))"
+docker run --rm -it -v "$(realpath $1):$workdir" -w "$workdir" angr/angr /bin/bash
