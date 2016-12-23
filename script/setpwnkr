@@ -15,13 +15,14 @@ args = parser.parse_args()
 u = args.username if args.username else args.problem
 p = args.password if args.password else 'guest'
 
-w = '/tmp/{}'.format(args.workdir) if args.workdir else '/tmp/ddaa{}'.format(''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(4)))
 
 workdir_exist = os.path.isfile('.workdir')
 if workdir_exist:
     w = open('.workdir', 'r').read()
 else:
     open('.workdir', 'w').write(w)
+
+w = '/tmp/{}'.format(args.workdir) if args.workdir else '/tmp/ddaa{}'.format(''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(4)))
 
 # prepare work environment
 t = ssh(user=u, host='pwnable.kr', port=2222, password=p)
