@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ -z $1 ] ; then
+    echo 'Usage: run-docker container [workdir]'
+    exit 0
+elif [ ! -z $2 ] && [ -d $2 ]; then
+    workdir="/root/$(basename $(realpath $2))"
+    docker run --rm -it -v "$(realpath $2):$workdir" -w "$workdir" "$1" /bin/bash
+else
+    docker run --rm -it -w "/root/" "$1" /bin/bash
+fi
+
