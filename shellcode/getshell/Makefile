@@ -1,6 +1,6 @@
 NAME=$(shell basename $(shell pwd))
 
-all: 32
+all: 32 64
 
 b32:
 	nasm -f elf32 $(NAME).asm -o asm.o && ld asm.o -m elf_i386 -o elf

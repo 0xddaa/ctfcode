@@ -14,7 +14,7 @@ open:
     jmp flag
 copy:
     mov rsi, [rsp]
-    mov rdi, rsp 
+    mov rdi, rsp
     xor rcx, rcx
 loop:
     mov al, [rsi + rcx]
@@ -23,7 +23,7 @@ loop:
     cmp rcx, %s
     jne loop
     xor rdx, rdx
-    mov [rdi + rcx], dl 
+    mov [rdi + rcx], dl
 write:
 ; write(fd, esp, 32)
     push rsp

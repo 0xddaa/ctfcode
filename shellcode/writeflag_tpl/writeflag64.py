@@ -6,7 +6,7 @@ import os
 
 
 def main(path, flag, debug):
-    with open("tpl.asm","r") as fp:
+    with open("tpl64.asm","r") as fp:
         template = fp.read()
 
     l = hex(len(flag))
@@ -19,11 +19,11 @@ def main(path, flag, debug):
         fp.write(asm)
 
 
-    os.system("nasm -f elf32 tmp.asm -o asm.o && ld asm.o -m elf_i386 -o elf")
+    os.system("nasm -f elf64 tmp.asm -o asm.o && ld asm.o -m elf_x86_64 -o elf64")
 
     with open("asm.o", "rb") as fp:
-        shellcode = fp.read()[272:]
-    
+        shellcode = fp.read()[0x180:]
+
     shellcode = shellcode[:shellcode.find("\x90\x90\x90\x90")]
 
     print "len:"+ str(len(shellcode))
