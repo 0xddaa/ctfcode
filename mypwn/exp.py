@@ -9,7 +9,7 @@ if not os.path.exists(prog):
 else:
     elf = ELF(prog); context.word_size = elf.elfclass
     with context.local(log_level='ERROR'):
-        libc = ELF('libc.so.6') if len(sys.argv) > 2 else elf.libc
+        libc = ELF('libc.so.6') if os.path.exists('libc.so.6') else elf.libc
     if not libc: log.warning('Cannot open libc.so.6')
 
 r = remote(HOST, PORT)
