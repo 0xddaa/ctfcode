@@ -11,15 +11,18 @@ else
 fi
 
 BIN=$(basename $WORKDIR)
+touch exp.py && chmod +x exp.py
 
 tmux new-session    -s pwn -n ncelf -d
 tmux send-key       -t pwn:0 "ncelf ./$BIN" C-m
-tmux new-window     -t pwn gdb "./$BIN"
-tmux new-window     -t pwn vim exp.py
+tmux new-window     -t pwn bash
+tmux send-key       -t pwn:1 "gdb ./$BIN" C-m
+tmux new-window     -t pwn bash
+tmux send-key       -t pwn:2 "vim exp.py" C-m
 tmux new-window     -t pwn bash
 tmux new-window     -t pwn bash
-tmux new-window     -t pwn ipython
+tmux new-window     -t pwn bash
+tmux send-key       -t pwn:5 "ipython" C-m
 tmux split-window   -t pwn:0 -h bash
-tmux split-window   -t pwn:2 -h bash
 tmux select-window  -t pwn:2
 tmux attach         -t pwn
