@@ -13,6 +13,7 @@ fi
 BIN=$(basename $WORKDIR)
 touch exp.py && chmod +x exp.py
 
+TERM=xterm-256color
 tmux new-session    -s pwn -n ncelf -d
 tmux send-key       -t pwn:0 "ncelf ./$BIN" C-m
 tmux new-window     -t pwn bash
