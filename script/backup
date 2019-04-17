@@ -12,7 +12,7 @@ fi
 
 root_id=$(gdrive list --query "name contains 'ctf_work'" | tail -n1 | awk '{print $1}')
 year=$(date +'%Y')
-target_id=$(gdrive list --query "'$root_id' in parents" | grep "$year" | awk '{print $1}')
+target_id=$(gdrive list --query "'$root_id' in parents" | grep "$year         dir" | awk '{print $1}')
 
 [ -z "$target_id" ] && target_id=$(gdrive mkdir -p "$root_id" "$year" | awk '{print $2}')
 gdrive upload -p "$target_id" -r "$1"
