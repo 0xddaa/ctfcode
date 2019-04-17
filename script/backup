@@ -1,10 +1,18 @@
 #!/bin/bash
 
-if [ -z $1 ]; then
+if [ -z "$1" ]; then
     echo "Usage: backup <directory>"
     exit
 fi
 
-dir=$(echo $1 | tr -d '/')
+if ! which gdrive > /dev/null; then
+    echo "need to install gdrive. See: https://github.com/gdrive-org/gdrive"
+    exit 1
+fi
 
-rsync -av $dir -e 'ssh -p 55667' dada@sqduty:~/ctf/ctf_work/
+root_id=$(gdrive list --query "name contains 'ctf_work'" | tail -n1 | awk '{print $1}')
+year=$(date +'%Y')
+target_id=$(gdrive list --query "'$root_id' in parents" | grep "$year" | awk '{print $1}')
+
+[ -z "$target_id" ] && target_id=$(gdrive mkdir -p "$root_id" "$year" | awk '{print $2}')
+gdrive upload -p "$target_id" -r "$1"
