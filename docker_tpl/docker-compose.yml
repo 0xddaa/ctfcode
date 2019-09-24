@@ -1,0 +1,10 @@
+PROBLEM:
+    build: ./
+    volumes:
+        - ./share:/home/ctf:ro
+        - ./xinetd:/etc/xinetd.d/PROBLEM:ro
+        - ./tmp:/tmp:ro
+    ports:
+        - "5566:56746"
+    expose:
+        - "56746"
