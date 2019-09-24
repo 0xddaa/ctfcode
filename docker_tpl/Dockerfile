@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:TAG
 MAINTAINER ddaa
 RUN apt-get update
 RUN apt-get install xinetd -y
